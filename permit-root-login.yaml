@@ -1,0 +1,36 @@
+---
+- hosts: master
+  become: yes
+  tasks:
+    - name: change root login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#PermitRootLogin prohibit-password'
+        line: 'PermitRootLogin no'
+      notify:
+        - restart sshd
+
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
+
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: change root login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#PermitRootLogin prohibit-password'
+        line: 'PermitRootLogin no'
+      notify:
+        - restart sshd
+
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted

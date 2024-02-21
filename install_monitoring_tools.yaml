@@ -1,0 +1,23 @@
+---
+- hosts: master
+  become: yes
+  tasks:
+    - name: install htop
+      apt:
+        name: htop
+        state: present
+    - name: install ncdu
+      apt:
+        name: ncdu
+        state: present
+- hosts: nodes
+  become: yes
+  tasks:
+    - name: install htop
+      apt:
+        name: htop
+        state: present
+    - name: install ncdu
+      apt:
+        name: ncdu
+        state: present
