@@ -3,20 +3,16 @@
 - hosts: all
   become: true
   tasks:
-  # Update sys
-  -  name: update repostiroy index
-     apt:
-       update_cache=yes
+ 
 
-   # Install apache
-  -  name: install apache2 package
+   # Install apache and php
+  -  name: install apache2 and php packages
      apt:
-       name: apache2
+       name:
+         - apache2
+         - libapache2-mod-php
        state: latest
+       update_cache: yes
+       
     
-   # Install PHP support for apache
-  -  name: add php support for apache
-     apt:
-       name: libapache2-mod-php
-       state: latest
-     when: ansible_nodename == "svcl-02"
+
