@@ -1,0 +1,12 @@
+---
+
+- hosts: 192.168.19.15
+  become: true
+  tasks:
+
+  -  name: remove apache2 and php package
+     yum:
+       name: 
+         - httpd
+         - php
+       state: absent
