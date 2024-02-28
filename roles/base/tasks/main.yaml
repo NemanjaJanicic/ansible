@@ -1,0 +1,4 @@
+- name: add ssh key for bimexperts
+  authorized_key:
+    user: bimexperts
+    key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIALUnvl3HNB96TZOsgKR2doRYknpc7QVSWPSXMB0eh4X ansible"
