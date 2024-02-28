@@ -4,6 +4,7 @@
   become: true
   pre_tasks:
 
+# Install updates for multiple Distros
   - name: install updates (CentOS)
     yum:
       update_only: yes
@@ -16,6 +17,35 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
+
+
+# Create new User for each serer
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Create bimexperts user
+    tags: always
+    user:
+      name: bimexperts
+      groups: root
+
+# Add ssh key for the user
+  - name: add ssh key for bimexperts
+    tags: always
+    authorized_key:
+      user: bimexperts
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIALUnvl3HNB96TZOsgKR2doRYknpc7QVSWPSXMB0eh4X ansible"
+    
+# Add user to sudoers file
+  - name: add sudoers file for bimexperts
+    tags: always
+    copy:
+      src: sudoer_bimexperts
+      dest: /etc/sudoers.d/bimexperts
+      owner: root
+      group: root
+      mode: 0440
 
 
 # SSL Certificate Error 
@@ -45,6 +75,7 @@
   become: true
   tasks:
 
+# Install Packages
   - name: install apache2 and php package (Ubuntu)
     apt:
       name: 
@@ -61,6 +92,7 @@
       state: latest
     when: ansible_distribution == "CentOS"
  
+ # Start Service
   - name: Start HTTPD service (CentOS)
     tags: apache,centos,httpd
     service:
@@ -69,6 +101,8 @@
       enabled: yes
     when: ansible_distribution == "CentOS"
 
+
+# Change config file
   - name: change e-mail address for admin
     tags: apache,centos,httpd,mail
     lineinfile:
@@ -79,6 +113,7 @@
     register: httpd
 
 
+# Restart Service if Config file is changed
   - name: restart httpd (CentOS)
     tags: apache,centos,httpd
     service:
@@ -87,6 +122,7 @@
     when: httpd.changed
 
 
+# Change Default HTML file in Apache
   - name: copy default html file for site
     tags: apache,apache2,httpd, copy
     copy:
@@ -95,6 +131,7 @@
       owner: root
       group: root
       mode: 0644
+
 
 # {DATABASE_SERVERS}
 - hosts: db_servers
