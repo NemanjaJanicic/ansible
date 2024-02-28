@@ -4,31 +4,20 @@
   become: true
   pre_tasks:
 
-# Install updates for multiple Distros
-  - name: install updates (CentOS)
+# Update cache for multiple Distros
+  - name: Update cache (CentOS)
     yum:
-      update_only: yes
       update_cache: yes
+      changed_false: false
     when: ansible_distribution == "CentOS"
 
-  - name: install updates (Ubuntu)
+  - name: update cache (Ubuntu)
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
 
 
-
-# Create new User for each serer
-- hosts: all
-  become: true
-  tasks:
-
-  - name: Create bimexperts user
-    tags: always
-    user:
-      name: bimexperts
-      groups: root
 
 # Add ssh key for the user
   - name: add ssh key for bimexperts
@@ -37,15 +26,6 @@
       user: bimexperts
       key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIALUnvl3HNB96TZOsgKR2doRYknpc7QVSWPSXMB0eh4X ansible"
     
-# Add user to sudoers file
-  - name: add sudoers file for bimexperts
-    tags: always
-    copy:
-      src: sudoer_bimexperts
-      dest: /etc/sudoers.d/bimexperts
-      owner: root
-      group: root
-      mode: 0440
 
 
 # SSL Certificate Error 

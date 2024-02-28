@@ -1,0 +1,49 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+
+  - name: upgrade update (CentOS)
+    yum:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: upgrade update (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+# Create new User for each serer
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Create bimexperts user
+    tags: always
+    user:
+      name: bimexperts
+      groups: root
+
+# Add ssh key for the user
+  - name: add ssh key for bimexperts
+    tags: always
+    authorized_key:
+      user: bimexperts
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIALUnvl3HNB96TZOsgKR2doRYknpc7QVSWPSXMB0eh4X ansible"
+    
+# Add user to sudoers file
+  - name: add sudoers file for bimexperts
+    tags: always
+    copy:
+      src: sudoer_bimexperts
+      dest: /etc/sudoers.d/bimexperts
+      owner: root
+      group: root
+      mode: 0440
+
+
